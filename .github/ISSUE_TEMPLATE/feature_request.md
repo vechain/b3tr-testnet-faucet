@@ -1,0 +1,17 @@
+---
+name: Feature request
+about: Suggest an improvement
+labels: enhancement
+---
+
+## Problem
+
+<!-- What problem does this solve? Who is affected? -->
+
+## Proposed solution
+
+<!-- How should it work? -->
+
+## Alternatives considered
+
+<!-- Other approaches you considered. -->

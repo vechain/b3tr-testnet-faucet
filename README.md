@@ -1,5 +1,7 @@
 # B3TR Testnet Faucet
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 A faucet dApp for distributing B3TR tokens on VeChain testnet. Users can claim a fixed amount per day; the owner can fund and configure the faucet.
 
 ## Stack
@@ -45,3 +47,13 @@ yarn workspace @b3tr-testnet-faucet/contracts deploy:mainnet
 ```
 
 Both write the resulting addresses back into `packages/config/{testnet,mainnet}.ts`.
+
+## Contributing
+
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+To report a security vulnerability, see [SECURITY.md](SECURITY.md) — please do NOT open a public issue.
+
+## License
+
+[MIT](LICENSE) © Vechain Foundation

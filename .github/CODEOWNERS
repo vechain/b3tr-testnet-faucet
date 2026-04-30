@@ -1,0 +1,10 @@
+# Default owner for everything not otherwise specified
+*       @vechain/b3tr-faucet-maintainers
+
+# Smart contracts — require contracts team review
+packages/contracts/    @vechain/b3tr-faucet-maintainers @vechain/contracts-reviewers
+
+# CI/CD and security-sensitive files
+.github/workflows/     @vechain/b3tr-faucet-maintainers
+.github/dependabot.yml @vechain/b3tr-faucet-maintainers
+SECURITY.md            @vechain/b3tr-faucet-maintainers

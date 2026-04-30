@@ -1,0 +1,44 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    # Pin third-party actions to full SHA via Dependabot's pinning strategy
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - github-actions
+
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    labels:
+      - dependencies
+    versioning-strategy: increase-if-necessary
+    groups:
+      chakra:
+        patterns:
+          - "@chakra-ui/*"
+          - "@emotion/*"
+      next:
+        patterns:
+          - "next"
+          - "eslint-config-next"
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+      hardhat:
+        patterns:
+          - "hardhat*"
+          - "@nomicfoundation/*"
+          - "@typechain/*"
+          - "typechain"
+      vechain:
+        patterns:
+          - "@vechain/*"

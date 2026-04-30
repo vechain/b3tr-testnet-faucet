@@ -1,49 +1,80 @@
-name: Deploy to GitHub Pages
+name: Deploy frontend to GitHub Pages
 
 on:
   push:
     branches: [main]
     paths:
       - "apps/frontend/**"
-      - "packages/**"
+      - "packages/config/**"
+      - "packages/contracts/**"
+      - "package.json"
+      - "yarn.lock"
+      - "turbo.json"
+      - ".github/workflows/deploy.yml"
   workflow_dispatch:
 
+# Least-privilege: only Pages deployment needs write
 permissions:
   contents: read
   pages: write
   id-token: write
 
+# One running deployment at a time, never cancel an in-flight one
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
   build:
+    name: Build static export
     runs-on: ubuntu-latest
+    env:
+      # Read by the static export at build time. testnet is the public network.
+      NEXT_PUBLIC_NETWORK: test
+      NEXT_PUBLIC_APP_ENV: testnet
+      NODE_OPTIONS: "--max-old-space-size=4096"
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node 20
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: 20
+          node-version-file: .nvmrc
           cache: yarn
 
-      - run: yarn install --frozen-lockfile
+      - name: Cache node_modules
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
 
-      - run: yarn build
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build (frontend + contracts compile)
         env:
-          NEXT_PUBLIC_BASE_PATH: "/${{ github.event.repository.name }}"
-          NEXT_PUBLIC_NETWORK: "test"
-          NEXT_PUBLIC_APP_ENV: "testnet"
-          NODE_OPTIONS: "--max-old-space-size=4096"
+          # Pages serves under /<repo-name>; passed via env so it isn't interpolated into shell.
+          REPO_NAME: ${{ github.event.repository.name }}
+        run: |
+          export NEXT_PUBLIC_BASE_PATH="/$REPO_NAME"
+          yarn build
 
-      - uses: actions/upload-pages-artifact@v3
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: apps/frontend/out
 
   deploy:
-    runs-on: ubuntu-latest
+    name: Deploy to Pages
     needs: build
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}

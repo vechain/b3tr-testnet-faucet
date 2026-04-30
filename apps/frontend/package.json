@@ -26,7 +26,7 @@
   "devDependencies": {
     "@b3tr-testnet-faucet/eslint-config": "*",
     "@b3tr-testnet-faucet/typescript-config": "*",
-    "@types/node": "^20",
+    "@types/node": "^25",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",

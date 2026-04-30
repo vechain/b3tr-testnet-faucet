@@ -1,14 +1,15 @@
 # Deployment
 
-This repo deploys via GitHub Actions. There are three workflows:
+This repo deploys via GitHub Actions. There are two workflows:
 
 | Workflow | Trigger | What it does |
 |---|---|---|
 | `ci.yml` | PRs and push to `main` | Lint, typecheck, contract tests, frontend build |
 | `deploy.yml` | Push to `main` (frontend/contracts/config paths) | Build static export and publish to GitHub Pages |
-| `contracts-deploy.yml` | Manual dispatch | Deploy `B3TRFaucet` to testnet/mainnet, open a PR with the new addresses |
 
-## One-time setup
+Contract deploys are run **locally** from a maintainer's machine — see [Deploying contracts](#deploying-contracts) below.
+
+## One-time GitHub setup
 
 ### 1. Enable GitHub Pages
 
@@ -16,27 +17,7 @@ Repo → **Settings → Pages → Source: GitHub Actions**.
 
 The deploy workflow serves the dApp at `https://vechain.github.io/b3tr-testnet-faucet/`. The `basePath` is set automatically from the repo name.
 
-### 2. Create environments
-
-Repo → **Settings → Environments**.
-
-| Environment | Purpose | Recommended protections |
-|---|---|---|
-| `github-pages` | Frontend deploy target | Auto-created by GitHub |
-| `testnet` | `contracts-deploy.yml` testnet runs | None (or 1 reviewer) |
-| `mainnet` | `contracts-deploy.yml` mainnet runs | **Required reviewers**, restrict to `main` branch |
-
-### 3. Add secrets
-
-Per environment (Settings → Environments → `<env>` → Secrets):
-
-| Secret | Used by | Notes |
-|---|---|---|
-| `DEPLOYER_MNEMONIC` | `contracts-deploy.yml` | Mnemonic for the deployer account on that network. **Never commit.** |
-
-The default `GITHUB_TOKEN` is used for opening PRs — no extra secret needed.
-
-### 4. Branch protection on `main`
+### 2. Branch protection on `main`
 
 Settings → **Branches → Add rule** for `main`:
 
@@ -45,15 +26,19 @@ Settings → **Branches → Add rule** for `main`:
 - Require branches to be up to date before merging
 - Restrict who can push directly (no one)
 
-## Deploying contracts
+## Deploying contracts (local)
 
-1. Go to **Actions → Deploy contracts (manual) → Run workflow**.
-2. Choose `testnet` or `mainnet`.
-3. The workflow:
-   - Compiles contracts
-   - Deploys `B3TRFaucet` (and reads B3TR address from the existing config)
-   - Opens a PR updating `packages/config/<network>.ts` with the new faucet address
-4. Merge the PR. The next push to `main` triggers `deploy.yml` and the new address is live in the frontend.
+Run from your machine, with `MNEMONIC` set in `.env` to the deployer wallet.
+
+```bash
+# testnet
+yarn workspace @b3tr-testnet-faucet/contracts deploy:testnet
+
+# mainnet
+yarn workspace @b3tr-testnet-faucet/contracts deploy:mainnet
+```
+
+The deploy script writes the new faucet address back into `packages/config/<network>.ts`. Commit that change, open a PR, and once it merges to `main` the next push triggers `deploy.yml` and the new address is live in the frontend.
 
 ## Frontend deploy
 

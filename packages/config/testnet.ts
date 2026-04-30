@@ -14,8 +14,8 @@ const config: AppConfig = {
     }
   },
   "contracts": {
-    "b3tr": "0x026771d1be764467f8bdb78bb230df10c924b00d",
-    "faucet": "0xfca716f9c93575f428fe49402424454077ccbfee"
+    "b3tr": "0x95761346d18244bb91664181bf91193376197088",
+    "faucet": "0x377425b1db8d03f3c9fb8af0e88860b86a18d17e"
   }
 }
 export default config

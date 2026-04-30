@@ -4,36 +4,22 @@ import { getConfig, AppConfig, AppEnv } from "@b3tr-testnet-faucet/config";
 import fs from "fs";
 import path from "path";
 
-// Defaults: 100 B3TR per claim, 1 claim per day
-const DEFAULT_AMOUNT_PER_CLAIM = ethers.parseEther("1000");
-const DEFAULT_MAX_CLAIMS_PER_DAY = 5n;
+// Defaults: 1000 B3TR per claim, 5 claims per day
+export const DEFAULT_AMOUNT_PER_CLAIM = ethers.parseEther("1000");
+export const DEFAULT_MAX_CLAIMS_PER_DAY = 5n;
 
-async function main() {
-  const config = getConfig();
+export async function deployMockB3TR(): Promise<string> {
   const [deployer] = await ethers.getSigners();
-  console.log(`Deploying to ${config.environment} with ${deployer.address}`);
+  const mockFactory = await ethers.getContractFactory("MockB3TR");
+  const mock = await mockFactory.connect(deployer).deploy();
+  await mock.waitForDeployment();
+  const address = await mock.getAddress();
+  console.log(`MockB3TR deployed to: ${address}`);
+  return address;
+}
 
-  let b3trAddress = config.contracts.b3tr;
-
-  // On local, deploy a MockB3TR if none is configured.
-  if (
-    config.environment === AppEnv.LOCAL &&
-    (!b3trAddress || b3trAddress === ethers.ZeroAddress)
-  ) {
-    console.log("No B3TR configured for local — deploying MockB3TR...");
-    const mockFactory = await ethers.getContractFactory("MockB3TR");
-    const mock = await mockFactory.deploy();
-    await mock.waitForDeployment();
-    b3trAddress = await mock.getAddress();
-    console.log(`MockB3TR deployed to: ${b3trAddress}`);
-  }
-
-  if (!b3trAddress) {
-    throw new Error(
-      `No B3TR address available for environment: ${config.environment}`,
-    );
-  }
-
+export async function deployFaucet(b3trAddress: string): Promise<string> {
+  const [deployer] = await ethers.getSigners();
   const faucet = await deployProxy(
     "B3TRFaucet",
     [
@@ -46,16 +32,15 @@ async function main() {
     undefined,
     true,
   );
-  const faucetAddress = await faucet.getAddress();
-  console.log(`B3TRFaucet deployed to: ${faucetAddress}`);
-
-  await writeConfig(config, { b3tr: b3trAddress, faucet: faucetAddress });
+  const address = await faucet.getAddress();
+  console.log(`B3TRFaucet deployed to: ${address}`);
+  return address;
 }
 
-async function writeConfig(
+export async function writeConfig(
   config: AppConfig,
   contracts: AppConfig["contracts"],
-) {
+): Promise<void> {
   const newConfig: AppConfig = { ...config, contracts };
   const toWrite = `import { AppConfig } from "."
 const config: AppConfig = ${JSON.stringify(newConfig, null, 2)}
@@ -82,7 +67,35 @@ export default config
   fs.writeFileSync(configPath, toWrite);
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+async function main() {
+  const config = getConfig();
+  const [deployer] = await ethers.getSigners();
+  console.log(`Deploying to ${config.environment} with ${deployer.address}`);
+
+  let b3trAddress = config.contracts.b3tr;
+
+  // On local, deploy a MockB3TR if none is configured.
+  if (
+    config.environment === AppEnv.LOCAL &&
+    (!b3trAddress || b3trAddress === ethers.ZeroAddress)
+  ) {
+    console.log("No B3TR configured for local — deploying MockB3TR...");
+    b3trAddress = await deployMockB3TR();
+  }
+
+  if (!b3trAddress) {
+    throw new Error(
+      `No B3TR address available for environment: ${config.environment}`,
+    );
+  }
+
+  const faucetAddress = await deployFaucet(b3trAddress);
+  await writeConfig(config, { b3tr: b3trAddress, faucet: faucetAddress });
+}
+
+if (require.main === module) {
+  main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+}

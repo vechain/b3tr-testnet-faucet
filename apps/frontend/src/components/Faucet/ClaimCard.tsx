@@ -1,7 +1,7 @@
 "use client"
 
 import { Box, Button, HStack, Heading, Stat, Text, VStack } from "@chakra-ui/react"
-import { useWallet } from "@vechain/vechain-kit"
+import { useConnectModal, useWallet } from "@vechain/vechain-kit"
 import { ethers } from "ethers"
 
 import {
@@ -19,6 +19,7 @@ const fmt = (v?: bigint) => (v == null ? "—" : Number(ethers.formatEther(v)).t
 export function ClaimCard() {
   const { account } = useWallet()
   const user = account?.address
+  const { open: openConnectModal } = useConnectModal()
 
   const amountPerClaim = useAmountPerClaim().data?.[0]
   const maxPerDay = useMaxClaimsPerDay().data?.[0]
@@ -29,8 +30,19 @@ export function ClaimCard() {
 
   const { claim, status } = useClaimTokens()
 
+  const isPending = status === "pending" || status === "waitingConfirmation"
   const isEmpty = faucetBalance != null && amountPerClaim != null && faucetBalance < amountPerClaim
-  const disabled = !user || canClaim === false || isEmpty || status === "pending" || status === "waitingConfirmation"
+  const limitReached = !!user && canClaim === false
+  // When disconnected, the button is enabled and opens the connect modal.
+  const disabled = !!user && (limitReached || isEmpty || isPending)
+
+  const onClick = () => {
+    if (!user) {
+      openConnectModal()
+      return
+    }
+    claim()
+  }
 
   return (
     <Box bg="bg.secondary" borderWidth="1px" borderColor="border.primary" borderRadius="lg" p={{ base: 5, md: 8 }}>
@@ -62,17 +74,12 @@ export function ClaimCard() {
           </Stat.Root>
         </HStack>
 
-        <Button
-          size="lg"
-          colorPalette="green"
-          disabled={disabled}
-          loading={status === "pending" || status === "waitingConfirmation"}
-          onClick={() => claim()}>
+        <Button size="lg" colorPalette="green" disabled={disabled} loading={isPending} onClick={onClick}>
           {!user
             ? "Connect wallet to claim"
             : isEmpty
               ? "Faucet empty"
-              : canClaim === false
+              : limitReached
                 ? "Daily limit reached"
                 : "Claim B3TR"}
         </Button>

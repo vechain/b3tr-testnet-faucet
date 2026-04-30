@@ -19,10 +19,10 @@ permissions:
   pages: write
   id-token: write
 
-# One running deployment at a time, never cancel an in-flight one
+# A new push cancels any in-flight deploy so latest main wins
 concurrency:
   group: pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:

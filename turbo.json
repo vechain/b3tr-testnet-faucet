@@ -1,0 +1,75 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalEnv": ["NEXT_PUBLIC_APP_ENV", "NEXT_PUBLIC_BASE_PATH", "NEXT_PUBLIC_NETWORK", "NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID", "MNEMONIC"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**", "out/**"]
+    },
+    "@b3tr-testnet-faucet/contracts#build": {
+      "cache": true,
+      "dependsOn": ["@b3tr-testnet-faucet/config#check-or-generate-local-config"],
+      "outputs": ["artifacts/**", "typechain-types/**", "cache/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": ["^setup-contracts"]
+    },
+    "dev:testnet": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": ["^setup-contracts:testnet"]
+    },
+    "dev:mainnet": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": ["^setup-contracts:mainnet"]
+    },
+    "setup-contracts": {
+      "cache": false,
+      "dependsOn": ["^compile", "@b3tr-testnet-faucet/contracts#check-contracts-deployment"]
+    },
+    "setup-contracts:testnet": {
+      "cache": false,
+      "dependsOn": ["^compile", "@b3tr-testnet-faucet/contracts#check-contracts-deployment:testnet"]
+    },
+    "setup-contracts:mainnet": {
+      "cache": false,
+      "dependsOn": ["^compile", "@b3tr-testnet-faucet/contracts#check-contracts-deployment:mainnet"]
+    },
+    "@b3tr-testnet-faucet/config#check-or-generate-local-config": {
+      "cache": false
+    },
+    "compile": {
+      "cache": true,
+      "dependsOn": ["@b3tr-testnet-faucet/config#check-or-generate-local-config"],
+      "outputs": ["artifacts/**", "typechain-types/**", "cache/**"]
+    },
+    "@b3tr-testnet-faucet/contracts#check-contracts-deployment": {
+      "cache": false,
+      "dependsOn": ["^compile", "@b3tr-testnet-faucet/config#check-or-generate-local-config"]
+    },
+    "@b3tr-testnet-faucet/contracts#check-contracts-deployment:testnet": {
+      "cache": false,
+      "dependsOn": ["^compile", "@b3tr-testnet-faucet/config#check-or-generate-local-config"]
+    },
+    "@b3tr-testnet-faucet/contracts#check-contracts-deployment:mainnet": {
+      "cache": false,
+      "dependsOn": ["^compile", "@b3tr-testnet-faucet/config#check-or-generate-local-config"]
+    },
+    "lint": {
+      "cache": false
+    },
+    "typecheck": {
+      "cache": false
+    },
+    "test": {
+      "cache": false,
+      "dependsOn": ["^compile", "@b3tr-testnet-faucet/config#check-or-generate-local-config"]
+    },
+    "clean": {
+      "cache": false
+    }
+  }
+}

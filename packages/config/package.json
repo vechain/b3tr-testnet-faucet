@@ -1,0 +1,17 @@
+{
+  "name": "@b3tr-testnet-faucet/config",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./index.ts",
+    "./local": "./local.ts",
+    "./testnet": "./testnet.ts",
+    "./mainnet": "./mainnet.ts"
+  },
+  "scripts": {
+    "check-or-generate-local-config": "node ./scripts/generateMockLocalConfig.mjs"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2"
+  }
+}

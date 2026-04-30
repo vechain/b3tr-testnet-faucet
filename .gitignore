@@ -1,0 +1,17 @@
+node_modules/
+.next/
+out/
+dist/
+.env
+.env.local
+*.tsbuildinfo
+next-env.d.ts
+artifacts/
+cache/
+typechain-types/
+coverage/
+.turbo/
+.DS_Store
+
+# Auto-generated local config (each dev's solo deployment has different addresses)
+packages/config/local.ts

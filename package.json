@@ -1,0 +1,35 @@
+{
+  "name": "b3tr-testnet-faucet",
+  "private": true,
+  "scripts": {
+    "dev": "yarn && dotenv -v NEXT_PUBLIC_APP_ENV=local -e .env -- turbo dev",
+    "dev:testnet": "yarn && dotenv -v NEXT_PUBLIC_APP_ENV=testnet -e .env -- turbo dev",
+    "dev:mainnet": "yarn && dotenv -v NEXT_PUBLIC_APP_ENV=mainnet -e .env -- turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "contracts:compile": "turbo compile --filter=@b3tr-testnet-faucet/contracts",
+    "contracts:test": "turbo test --filter=@b3tr-testnet-faucet/contracts",
+    "contracts:generate-docs": "turbo generate-docs --filter=@b3tr-testnet-faucet/contracts",
+    "contracts:coverage": "turbo coverage --filter=@b3tr-testnet-faucet/contracts",
+    "contracts:size": "turbo size --filter=@b3tr-testnet-faucet/contracts",
+    "solo-up": "make solo-up",
+    "solo-down": "make solo-down",
+    "clean": "turbo clean && rm -rf node_modules"
+  },
+  "dependencies": {
+    "turbo": "^2.5.0"
+  },
+  "devDependencies": {
+    "dotenv-cli": "^7.4.0",
+    "prettier": "^3.3.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": "20.x.x"
+  },
+  "packageManager": "yarn@1.22.22"
+}

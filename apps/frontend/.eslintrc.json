@@ -1,0 +1,3 @@
+{
+  "extends": ["@b3tr-testnet-faucet/eslint-config/next"]
+}

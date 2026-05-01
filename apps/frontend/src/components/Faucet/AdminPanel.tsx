@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Button, HStack, Heading, Input, SimpleGrid, Text, VStack } from "@chakra-ui/react"
+import { Box, Button, Flex, Heading, Input, SimpleGrid, Text, VStack } from "@chakra-ui/react"
 import { useWallet } from "@vechain/vechain-kit"
 import { ethers } from "ethers"
 import { useState } from "react"
@@ -28,14 +28,21 @@ export function AdminPanel() {
   if (!isOwner) return null
 
   return (
-    <Box bg="bg.secondary" borderWidth="1px" borderColor="border.primary" borderRadius="lg" p={{ base: 5, md: 8 }}>
-      <VStack align="stretch" gap={6}>
+    <Box
+      bg="bg.secondary"
+      borderWidth="1px"
+      borderColor="border.primary"
+      borderRadius="lg"
+      p={{ base: 4, md: 8 }}>
+      <VStack align="stretch" gap={{ base: 4, md: 6 }}>
         <VStack align="stretch" gap={1}>
-          <Heading size="md">Admin</Heading>
-          <Text color="text.subtle">You are the faucet owner. Fund and configure below.</Text>
+          <Heading size={{ base: "sm", md: "md" }}>Admin</Heading>
+          <Text textStyle={{ base: "sm", md: "md" }} color="text.subtle">
+            You are the faucet owner. Fund and configure below.
+          </Text>
         </VStack>
 
-        <SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
+        <SimpleGrid columns={{ base: 1, md: 2 }} gap={{ base: 4, md: 6 }}>
           <FundForm walletBalance={userBalance} />
           <SetAmountForm current={amountPerClaim} />
           <SetMaxForm current={maxPerDay} />
@@ -57,7 +64,7 @@ function FundForm({ walletBalance }: { walletBalance?: bigint }) {
       <Text textStyle="sm" color="text.subtle">
         Wallet B3TR: {balanceText}
       </Text>
-      <HStack>
+      <Flex direction={{ base: "column", sm: "row" }} gap={2}>
         <Input
           placeholder="Amount in B3TR"
           value={value}
@@ -73,7 +80,7 @@ function FundForm({ walletBalance }: { walletBalance?: bigint }) {
           onClick={() => fund(value).then(() => setValue(""))}>
           Fund
         </Button>
-      </HStack>
+      </Flex>
     </VStack>
   )
 }
@@ -90,7 +97,7 @@ function SetAmountForm({ current }: { current?: bigint }) {
       <Text textStyle="sm" color="text.subtle">
         Current: {currentText} B3TR
       </Text>
-      <HStack>
+      <Flex direction={{ base: "column", sm: "row" }} gap={2}>
         <Input
           placeholder="New amount in B3TR"
           value={value}
@@ -105,7 +112,7 @@ function SetAmountForm({ current }: { current?: bigint }) {
           onClick={() => setAmount(value).then(() => setValue(""))}>
           Update
         </Button>
-      </HStack>
+      </Flex>
     </VStack>
   )
 }
@@ -121,7 +128,7 @@ function SetMaxForm({ current }: { current?: bigint }) {
       <Text textStyle="sm" color="text.subtle">
         Current: {current?.toString() ?? "—"}
       </Text>
-      <HStack>
+      <Flex direction={{ base: "column", sm: "row" }} gap={2}>
         <Input
           placeholder="New max"
           value={value}
@@ -136,7 +143,7 @@ function SetMaxForm({ current }: { current?: bigint }) {
           onClick={() => setMax(value).then(() => setValue(""))}>
           Update
         </Button>
-      </HStack>
+      </Flex>
     </VStack>
   )
 }

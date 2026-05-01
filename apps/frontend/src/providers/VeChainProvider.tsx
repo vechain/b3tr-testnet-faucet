@@ -37,6 +37,10 @@ export function VeChainProvider({ children }: Props) {
           : undefined,
       }}
       loginMethods={[{ method: "dappkit", gridColumn: 4 }]}
+      loginModalUI={{
+        description:
+          "Connect your wallet to claim B3TR on VeChain testnet.",
+      }}
       darkMode={isDarkMode}
       language="en"
       network={{ type: networkType }}

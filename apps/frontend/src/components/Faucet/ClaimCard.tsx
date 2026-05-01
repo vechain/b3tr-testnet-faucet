@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Button, HStack, Heading, Stat, Text, VStack } from "@chakra-ui/react"
+import { Box, Button, Heading, SimpleGrid, Stat, Text, VStack } from "@chakra-ui/react"
 import { useConnectModal, useWallet } from "@vechain/vechain-kit"
 import { ethers } from "ethers"
 
@@ -45,18 +45,23 @@ export function ClaimCard() {
   }
 
   return (
-    <Box bg="bg.secondary" borderWidth="1px" borderColor="border.primary" borderRadius="lg" p={{ base: 5, md: 8 }}>
-      <VStack align="stretch" gap={6}>
+    <Box
+      bg="bg.secondary"
+      borderWidth="1px"
+      borderColor="border.primary"
+      borderRadius="lg"
+      p={{ base: 4, md: 8 }}>
+      <VStack align="stretch" gap={{ base: 4, md: 6 }}>
         <VStack align="stretch" gap={1}>
-          <Heading size="lg">Claim B3TR</Heading>
-          <Text color="text.subtle">
+          <Heading size={{ base: "md", md: "lg" }}>Claim B3TR</Heading>
+          <Text textStyle={{ base: "sm", md: "md" }} color="text.subtle">
             {amountPerClaim != null
               ? `Get ${fmt(amountPerClaim)} B3TR per claim, up to ${maxPerDay?.toString() ?? "—"} times per day.`
               : "Loading faucet…"}
           </Text>
         </VStack>
 
-        <HStack gap={6} wrap="wrap">
+        <SimpleGrid columns={{ base: 1, sm: 3 }} gap={{ base: 3, md: 4 }}>
           <Stat.Root>
             <Stat.Label>Faucet balance</Stat.Label>
             <Stat.ValueText>{fmt(faucetBalance)}</Stat.ValueText>
@@ -72,9 +77,15 @@ export function ClaimCard() {
             <Stat.ValueText>{remaining?.toString() ?? "—"}</Stat.ValueText>
             <Stat.HelpText>claims</Stat.HelpText>
           </Stat.Root>
-        </HStack>
+        </SimpleGrid>
 
-        <Button size="lg" colorPalette="green" disabled={disabled} loading={isPending} onClick={onClick}>
+        <Button
+          size={{ base: "md", md: "lg" }}
+          width="full"
+          colorPalette="green"
+          disabled={disabled}
+          loading={isPending}
+          onClick={onClick}>
           {!user
             ? "Connect wallet to claim"
             : isEmpty

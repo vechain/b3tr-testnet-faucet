@@ -51,7 +51,7 @@ jobs:
           node-version-file: .nvmrc
           cache: yarn
 
-      - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      - uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
         with:
           path: |
             node_modules
@@ -85,7 +85,7 @@ jobs:
           node-version-file: .nvmrc
           cache: yarn
 
-      - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      - uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
         with:
           path: |
             node_modules
@@ -93,7 +93,7 @@ jobs:
             packages/*/node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
 
-      - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      - uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
         with:
           path: ~/.cache/hardhat-nodejs
           key: ${{ runner.os }}-solc-${{ hashFiles('packages/contracts/hardhat.config.ts') }}
@@ -121,7 +121,7 @@ jobs:
           node-version-file: .nvmrc
           cache: yarn
 
-      - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      - uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
         with:
           path: |
             node_modules
